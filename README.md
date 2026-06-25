@@ -102,18 +102,9 @@ Visit the [Satisfactory modding documentation](https://docs.ficsit.app/satisfact
 
 ## License
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This project is licensed under GPLv3, see [LICENSE](LICENSE).
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a [copy of the GNU General Public License](LICENSE)
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+Copyright (c) 2023-2026 Steveplays
 
 ## Attribution
 
@@ -122,4 +113,4 @@ Icon created by Drew (xXdrewbaccaXx).
 ## Contact info
 
 If you want to say hi, head over to my [Discord server](https://discord.gg/KbWxgGg).  
-Patreon: [steveplays28](https://patreon.com/steveplays28)  
+Patreon: [steveplays28](https://patreon.com/steveplays28)
