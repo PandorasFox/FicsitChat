@@ -43,7 +43,7 @@ public class FicsitChat : ModuleRules
 			"NetCore",
 			"GameplayTags",
 			"Json", "JsonUtilities",
-			"AssetRegistry"
+			"HTTP"
 		});
 
 		// FactoryGame plugins
@@ -62,6 +62,6 @@ public class FicsitChat : ModuleRules
 		// {
 		// 	PublicDependencyModuleNames.AddRange(new string[] { "OnlineBlueprintSupport", "AnimGraph" });
 		// }
-		PublicDependencyModuleNames.AddRange(new string[] { "FactoryGame", "SML", "DPPLibrary" });
+		PublicDependencyModuleNames.AddRange(new string[] { "FactoryGame", "SML" });
 	}
 }

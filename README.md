@@ -2,7 +2,7 @@
 
 ![icon](assets/ficsit_chat_icon_128x128.png)
 
-Satisfactory to Discord chat bridge mod with lots of configurability.
+Satisfactory to Telegram chat bridge mod with lots of configurability.
 
 <details open>
 <summary>Image gallery</summary>
@@ -15,22 +15,22 @@ Satisfactory to Discord chat bridge mod with lots of configurability.
 
 ## Usage
 
-1. Create a Discord bot on Discord's [developer portal](https://discord.com/developers/applications) (make sure to copy the bot token as you will need it in the next few steps - it only appears once and you have to revoke the old one to generate a new one)
-    - Example application name: `FicsitChat`
-    - Example description: `Satisfactory to Discord chat bridge.`
-    - Example bot username: `FICSIT.chat`
-    - Example icon: [`assets\ficsit_chat_icon_512x512.png`](assets\ficsit_chat_icon_512x512.png)
-2. Enable message content intent
-3. Invite the bot to your server
-4. Enter the bot token into FICSIT.chat's [configuration](#configuration)
-5. Enable [developer mode in your Discord client](https://discord.com/developers/docs/activities/building-an-activity#step-0-enable-developer-mode)
-6. Copy the ID of the channel (`Hover over channel->Right click->Copy Channel ID`) you want the bot to use to post Satisfactory messages and send Discord messages back to Satisfactory.
-7. Enter the channel ID into FICSIT.chat's configuration (see next section)
-8. Modify the other options in FICSIT.chat's configuration to your heart's content
+1. Create a Telegram bot by messaging [@BotFather](https://t.me/BotFather) on Telegram: send `/newbot` and follow the prompts (make sure to copy the bot token as you will need it in the next few steps)
+    - Example bot name: `FICSIT.chat`
+    - Example bot username: `FicsitChatBot`
+2. Disable the bot's privacy mode so it can read group messages: send `/setprivacy` to @BotFather, select your bot, and choose `Disable`
+3. Add the bot to the Telegram group you want to bridge the game chat with
+4. Get the chat ID of the group:
+    - Add [@getidsbot](https://t.me/getidsbot) to the group and copy the chat ID it prints (group chat IDs are negative numbers, e.g. `-1001234567890`), or
+    - Send a message in the group and open `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates` in a browser, then copy the `message.chat.id` value
+5. Enter the bot token and chat ID into FICSIT.chat's [configuration](#configuration)
+6. Modify the other options in FICSIT.chat's configuration to your heart's content
 
 Have fun!
 
 ### Configuration
+
+> **Note:** The `Channel ID` option holds the Telegram **chat ID** (or the `@username` of a public group/channel).
 
 #### Client
 
@@ -49,52 +49,36 @@ The configuration file's content looks like this:
 	"BotToken": "BOT_TOKEN_GOES_HERE",
 	"HasJoinedMessage": true,
 	"HasLeftMessage": true,
-	"ChannelId": "CHANNEL_ID_GOES_HERE",
+	"ChannelId": "CHAT_ID_GOES_HERE",
 	"ChatMessageColor":
 	{
 		"Red": 0.34999999403953552,
 		"Green": 0.40000000596046448,
 		"Blue": 0.94999998807907104
 	},
-	"SML_ModVersion_DoNotChange": "1.0.0"
+	"SML_ModVersion_DoNotChange": "2.1.0"
 }
 ```
+
+#### A note on vanilla clients
+
+Every player joining a dedicated server that runs SML needs SML installed client-side (use the [Satisfactory Mod Manager](https://smm.ficsit.app) or [ficsit-cli](https://github.com/satisfactorymodding/ficsit-cli)). FICSIT.chat itself is **not** needed on clients thanks to `AcceptsAnyRemoteVersion`. Truly vanilla clients cannot join: the game refuses modded servers client-side, and even when that check is bypassed, vanilla clients get disconnected during the join because SML replicates objects they don't have classes for (verified experimentally).
 
 ## Contributing
 
 To report bugs/crashes, or give suggestions, head over to the repository's [issues tab](https://github.com/Steveplays28/FicsitChat/issues).  
 
-### Know bugs
-
-If you add your discord bot to multiple discord servers, it's gonna send messages to channels with the same id if they exist.  
-
 ### TODO
 
-- [ ] Add support for multiple discord servers (adding server id and channel id pair to configuration)
-- [ ] Build target and DPP for Linux
+- [ ] Add support for bridging multiple Telegram chats
+- [ ] Update the in-game configuration screen's tooltips (they still reference Discord)
 
 ## Development
 
-- Satisfactory version: `1.1`
-- Satisfactory Mod Loader (SML) version: `3.11.3`
+- Satisfactory version: `1.2`
+- Satisfactory Mod Loader (SML) version: `3.12.0`
 
-### Prerequisites
-
-This mod requires the **D++ Discord library** to be set up before building. The current version used is **10.1.4**.
-
-1. Download the Visual Studio 2022 version for Windows from the [website](https://dl.dpp.dev/latest/win64-release-vs2022)
-2. Extract the contents to: `Source/ThirdParty/DPPLibrary/`
-   - The final structure should look like:
-     ```
-     Source/ThirdParty/DPPLibrary/
-     ├── DPPLibrary.Build.cs
-     └── libdpp-10.1.4-win64/      (or your version)
-         ├── bin/
-         ├── include/
-         └── lib/
-     ```
-
-> **Note:** The DPP library files are not included in this repository due to their size. Each developer must download and extract them locally.
+The mod uses Telegram's [Bot API](https://core.telegram.org/bots/api) over Unreal's built-in HTTP module, so there are no third-party libraries to set up.
 
 ### Building
 

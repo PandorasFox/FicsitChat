@@ -1,11 +1,13 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.1.0",
-	"SemVersion": "1.1.0",
+	"Version": 4,
+	"VersionName": "2.2.1",
+	"SemVersion": "2.2.1",
+	"GameVersion": ">=491125",
 	"AcceptsAnyRemoteVersion": true,
+	"RequiredOnRemote": false,
 	"FriendlyName": "FICSIT.chat",
-	"Description": "Satisfactory to Discord chat bridge.",
+	"Description": "Satisfactory to Telegram chat bridge.",
 	"Category": "Modding",
 	"CreatedBy": "Steveplays28",
 	"CreatedByURL": "https://steveplays28.github.io",
@@ -26,7 +28,7 @@
 	"Plugins": [
 		{
 			"Name": "SML",
-			"SemVersion": "^3.7.0",
+			"SemVersion": "^3.12.0",
 			"Enabled": true
 		}
 	]

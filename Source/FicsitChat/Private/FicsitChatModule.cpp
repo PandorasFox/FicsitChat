@@ -1,11 +1,8 @@
 #include "FicsitChatModule.h"
 #include "FGChatManager.h"
-#include "FGPlayerState.h"
 #include "FicsitChatWorldModule.h"
-#include "Module/GameInstanceModule.h"
 #include "Module/WorldModuleManager.h"
 #include "Patching/NativeHookManager.h"
-#include "Reflection/BlueprintReflectionLibrary.h"
 
 #define LOCTEXT_NAMESPACE "FFicsitChatModule"
 
@@ -25,26 +22,34 @@ void FFicsitChatModule::ShutdownModule() {
 
 void FFicsitChatModule::RegisterHooks() {
 #if !WITH_EDITOR
-	AFGChatManager *afgChatManager = GetMutableDefault<AFGChatManager>();
-	SUBSCRIBE_METHOD_VIRTUAL_AFTER(AFGChatManager::AddChatMessageToReceived, afgChatManager, [](AFGChatManager *self, FChatMessageStruct newMessage) {
+	SUBSCRIBE_METHOD_AFTER(AFGChatManager::AddChatMessageToReceived, [](AFGChatManager *self, const FChatMessageStruct &newMessage) {
 		UE_LOG(LogFicsitChat, Verbose, TEXT("Chat message by %s sent to all clients: %s"), *newMessage.MessageSender.ToString(), *newMessage.MessageText.ToString());
 
-		FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig((UFicsitChatWorldModule *)self->GetWorld());
-		UFicsitChatWorldModule *worldModule = (UFicsitChatWorldModule *)self->GetWorld()->GetSubsystem<UWorldModuleManager>()->FindModule(TEXT("FicsitChat"));
-
-		std::string userName = TCHAR_TO_UTF8(*newMessage.MessageSender.ToString());
-		std::string message = TCHAR_TO_UTF8(*newMessage.MessageText.ToString());
-		if (message == std::string("has joined the game!") && !config.HasJoinedMessage) {
-			return;
-		}
-		if (message == std::string("has left the game!") && !config.HasLeftMessage) {
+		UWorld *world = self->GetWorld();
+		if (!world) {
 			return;
 		}
 
-		dpp::embed embed =
-			dpp::embed().set_color(dpp::colors::orange).set_title(userName).set_description(message).set_footer(dpp::embed_footer().set_text("If you're tired, just remember you can buy a FICSIT™ Coffee Cup at the AWESOME Shop!"));
+		UFicsitChatWorldModule *worldModule = Cast<UFicsitChatWorldModule>(world->GetSubsystem<UWorldModuleManager>()->FindModule(TEXT("FicsitChat")));
+		if (!worldModule || worldModule->isInjectingRemoteMessage) {
+			return;
+		}
 
-		worldModule->bot->message_create(dpp::message(dpp::snowflake::snowflake(TCHAR_TO_UTF8(*config.ChannelId)), embed));
+		FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig(world);
+
+		FString messageAuthor = newMessage.MessageSender.ToString();
+		FString messageContent = newMessage.MessageText.ToString();
+		// System messages contain a <PlayerName/> token that game clients substitute at display time
+		messageContent.ReplaceInline(TEXT("<PlayerName/>"), *messageAuthor);
+		if (messageContent.EndsWith(TEXT("has joined the game!")) && !config.HasJoinedMessage) {
+			return;
+		}
+		if (messageContent.EndsWith(TEXT("has left the game!")) && !config.HasLeftMessage) {
+			return;
+		}
+
+		const bool isSystemMessage = newMessage.MessageType != EFGChatMessageType::CMT_PlayerMessage;
+		worldModule->SendMessageToTelegram(messageAuthor, messageContent, isSystemMessage);
 	});
 #endif
 }

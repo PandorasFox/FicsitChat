@@ -1,19 +1,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/TimerHandle.h"
 #include "FicsitChat_ConfigStruct.h"
+#include "Interfaces/IHttpRequest.h"
 #include "Module/GameWorldModule.h"
 #include "Modules/ModuleManager.h"
 
-// DPP (and WindowsHWrapper)
-#include "Windows/WindowsHWrapper.h"
-
-THIRD_PARTY_INCLUDES_START
-#include "dpp/dpp.h"
-THIRD_PARTY_INCLUDES_END
-
-//
 #include "FicsitChatWorldModule.generated.h"
+
+class FJsonObject;
 
 UCLASS()
 class UFicsitChatWorldModule : public UGameWorldModule {
@@ -22,13 +18,30 @@ class UFicsitChatWorldModule : public UGameWorldModule {
   public:
 	UFicsitChatWorldModule();
 
-	virtual void BeginDestroy();
+	virtual void BeginDestroy() override;
 	virtual void DispatchLifecycleEvent(ELifecyclePhase Phase) override;
 
-	bool ValidateBotToken(FString botToken);
-	void SendMessageToGame(FString messageContent, FString messageAuthor);
+	bool ValidateBotToken(const FString &botToken);
+	void SendMessageToGame(const FString &messageContent, const FString &messageAuthor);
+	void SendMessageToTelegram(const FString &messageAuthor, const FString &messageContent, bool isSystemMessage = false);
 
-	TSharedPtr<dpp::cluster> bot;
+	// True while a Telegram message is being injected into the game chat, so the chat hook doesn't echo it back to Telegram
+	bool isInjectingRemoteMessage = false;
+
+  private:
+	void RequestBotInfo();
+	void PollUpdates();
+	void OnUpdatesReceived(FHttpRequestPtr request, FHttpResponsePtr response, bool connectedSuccessfully);
+	void SchedulePoll(float delaySeconds);
+	void ProcessUpdate(const TSharedPtr<FJsonObject> &update);
+	bool MatchesConfiguredChat(const TSharedPtr<FJsonObject> &chat) const;
+	FString GetApiUrl(const FString &method) const;
+
+	FString botToken;
+	FString chatId;
 	FString botUsername;
-	uint16_t botDiscriminator;
+	int64 lastUpdateId = 0;
+	bool isShuttingDown = false;
+	FHttpRequestPtr activePollRequest;
+	FTimerHandle pollTimerHandle;
 };
