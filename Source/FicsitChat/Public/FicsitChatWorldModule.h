@@ -28,6 +28,9 @@ class UFicsitChatWorldModule : public UGameWorldModule {
 	// True while a Telegram message is being injected into the game chat, so the chat hook doesn't echo it back to Telegram
 	bool isInjectingRemoteMessage = false;
 
+	// Loaded from Configs/FicsitChat.cfg on world load
+	FFicsitChat_ConfigStruct activeConfig;
+
   private:
 	void RequestBotInfo();
 	void PollUpdates();

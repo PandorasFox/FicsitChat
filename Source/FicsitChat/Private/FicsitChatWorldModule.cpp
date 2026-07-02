@@ -61,7 +61,8 @@ void UFicsitChatWorldModule::DispatchLifecycleEvent(ELifecyclePhase Phase) {
 	UE_LOG(LogFicsitChat, Verbose, TEXT("DispatchLifecycleEvent"));
 
 	// Get mod config
-	FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig(GetWorld());
+	activeConfig = FFicsitChat_ConfigStruct::LoadFromConfigFile();
+	const FFicsitChat_ConfigStruct &config = activeConfig;
 
 	if (!ValidateBotToken(config.BotToken)) {
 		return;
@@ -237,7 +238,7 @@ void UFicsitChatWorldModule::SchedulePoll(float delaySeconds) {
 }
 
 void UFicsitChatWorldModule::SendMessageToGame(const FString &messageContent, const FString &messageAuthor) {
-	FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig(GetWorld());
+	const FFicsitChat_ConfigStruct &config = activeConfig;
 
 	FChatMessageStruct chatMessageStruct{};
 	chatMessageStruct.MessageText = FText::FromString(messageContent);

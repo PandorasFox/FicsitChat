@@ -1,38 +1,33 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "Configuration/ConfigManager.h"
-#include "Engine/Engine.h"
 #include "FicsitChat_ConfigStruct.generated.h"
-
-struct FFicsitChat_ConfigStruct_ChatMessageColor;
 
 USTRUCT(BlueprintType)
 struct FFicsitChat_ConfigStruct_ChatMessageColor {
     GENERATED_BODY()
 public:
     UPROPERTY(BlueprintReadWrite)
-    float Red{};
+    float Red{0.35f};
 
     UPROPERTY(BlueprintReadWrite)
-    float Green{};
+    float Green{0.4f};
 
     UPROPERTY(BlueprintReadWrite)
-    float Blue{};
+    float Blue{0.95f};
 };
 
-/* Struct generated from Mod Configuration Asset '/FicsitChat/FicsitChat_Config' */
 USTRUCT(BlueprintType)
 struct FFicsitChat_ConfigStruct {
     GENERATED_BODY()
 public:
     UPROPERTY(BlueprintReadWrite)
-    FString BotToken{};
+    FString BotToken{TEXT("BOT_TOKEN_HERE")};
 
     UPROPERTY(BlueprintReadWrite)
-    bool HasJoinedMessage{};
+    bool HasJoinedMessage{true};
 
     UPROPERTY(BlueprintReadWrite)
-    bool HasLeftMessage{};
+    bool HasLeftMessage{true};
 
     UPROPERTY(BlueprintReadWrite)
     FString ChannelId{};
@@ -40,15 +35,6 @@ public:
     UPROPERTY(BlueprintReadWrite)
     FFicsitChat_ConfigStruct_ChatMessageColor ChatMessageColor;
 
-    /* Retrieves active configuration value and returns object of this struct containing it */
-    static FFicsitChat_ConfigStruct GetActiveConfig(UObject* WorldContext) {
-        FFicsitChat_ConfigStruct ConfigStruct{};
-        FConfigId ConfigId{"FicsitChat", ""};
-        if (const UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::ReturnNull)) {
-            UConfigManager* ConfigManager = World->GetGameInstance()->GetSubsystem<UConfigManager>();
-            ConfigManager->FillConfigurationStruct(ConfigId, FDynamicStructInfo{FFicsitChat_ConfigStruct::StaticStruct(), &ConfigStruct});
-        }
-        return ConfigStruct;
-    }
+    /* Loads the configuration from Configs/FicsitChat.cfg, creating the file with defaults if it doesn't exist */
+    static FFicsitChat_ConfigStruct LoadFromConfigFile();
 };
-

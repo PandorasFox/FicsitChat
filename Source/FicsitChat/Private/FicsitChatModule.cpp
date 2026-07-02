@@ -30,12 +30,12 @@ void FFicsitChatModule::RegisterHooks() {
 			return;
 		}
 
-		UFicsitChatWorldModule *worldModule = Cast<UFicsitChatWorldModule>(world->GetSubsystem<UWorldModuleManager>()->FindModule(TEXT("FicsitChat")));
+		UFicsitChatWorldModule *worldModule = Cast<UFicsitChatWorldModule>(world->GetSubsystem<UWorldModuleManager>()->FindModule(TEXT("ficsit_telegram_chat_bridge")));
 		if (!worldModule || worldModule->isInjectingRemoteMessage) {
 			return;
 		}
 
-		FFicsitChat_ConfigStruct config = FFicsitChat_ConfigStruct::GetActiveConfig(world);
+		const FFicsitChat_ConfigStruct &config = worldModule->activeConfig;
 
 		FString messageAuthor = newMessage.MessageSender.ToString();
 		FString messageContent = newMessage.MessageText.ToString();
